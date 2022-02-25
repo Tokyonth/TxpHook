@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/bg_bottom_action.xml" value="0.1625" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/bg_dialog_round.xml" value="0.1625" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/bg_round_status.xml" value="0.1625" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/ic_round_add_24.xml" value="0.1625" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/ic_round_arrow_24.xml" value="0.1625" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/activity_app_list.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/activity_hook_app.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/activity_main.xml" value="0.17806484295845998" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/item_hook_apps.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/item_hook_config.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/item_installed_apps.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/item_list_array.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/layout_dialog_input.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/layout_hook_input.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/layout_progress_dialog.xml" value="0.22780797101449277" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
