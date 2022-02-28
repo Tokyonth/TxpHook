@@ -12,25 +12,37 @@ import kotlinx.coroutines.launch
 
 class DataBaseViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _dataResultLiveData = MutableLiveData<MutableList<HookAppInfo>>()
+    private val _hookAppInfoLiveData = MutableLiveData<MutableList<HookAppInfo>>()
 
-    val dataResultLiveData: MutableLiveData<MutableList<HookAppInfo>> = _dataResultLiveData
+    val hookAppInfoLiveData: MutableLiveData<MutableList<HookAppInfo>> = _hookAppInfoLiveData
 
-    private val _ruleResultLiveData = MutableLiveData<HookAppInfo>()
+    private val _pkgHookAppInfoLiveData = MutableLiveData<HookAppInfo>()
 
-    val ruleResultLiveData: MutableLiveData<HookAppInfo> = _ruleResultLiveData
+    val pkgHookAppInfoLiveData: MutableLiveData<HookAppInfo> = _pkgHookAppInfoLiveData
+
+    private val _hookRuleLiveData = MutableLiveData<HookRule>()
+
+    val hookRuleLiveData: MutableLiveData<HookRule> = _hookRuleLiveData
 
     fun getAllConfigData() {
         viewModelScope.launch {
             val allData = HookDbManager.get.getDao().queryAllConfig()
-            _dataResultLiveData.value = allData.toMutableList()
+            _hookAppInfoLiveData.value = allData.toMutableList()
         }
     }
 
-    fun getRuleData(pkgName: String) {
+    fun getPkgRulesData(pkgName: String) {
         viewModelScope.launch {
-            HookDbManager.get.getDao().getRulesByPkg(pkgName)?.let {
-                ruleResultLiveData.value = it
+            HookDbManager.get.getDao().queryRulesByPkg(pkgName)?.let {
+                _pkgHookAppInfoLiveData.value = it
+            }
+        }
+    }
+
+    fun getRuleData(name: String) {
+        viewModelScope.launch {
+            HookDbManager.get.getDao().queryRule(name)?.let {
+                _hookRuleLiveData.value = it
             }
         }
     }

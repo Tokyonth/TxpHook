@@ -12,7 +12,11 @@ interface HookDao {
 
     @Transaction
     @Query("SELECT * FROM ${Constants.DATABASE_TABLE_CONFIG_NAME} where packageName = :pkgName")
-    suspend fun getRulesByPkg(pkgName: String): HookAppInfo?
+    suspend fun queryRulesByPkg(pkgName: String): HookAppInfo?
+
+    @Transaction
+    @Query("SELECT * FROM ${Constants.DATABASE_TABLE_RULE_NAME} where hookName = :name")
+    suspend fun queryRule(name: String): HookRule?
 
     @Insert
     suspend fun insertConfig(vararg hookConfigs: HookConfig): List<Long>

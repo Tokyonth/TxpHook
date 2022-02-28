@@ -28,7 +28,7 @@ class MainActivity : BaseActivity() {
         hookAdapter = HookAppsAdapter(this)
 
         model.getAllConfigData()
-        model.dataResultLiveData.observe(this) {
+        model.hookAppInfoLiveData.observe(this) {
             hookAdapter.setData(it)
         }
     }

@@ -40,8 +40,8 @@ class HookAppActivity : BaseActivity() {
 
         configAdapter = HookConfigAdapter(this)
 
-        model.getRuleData(appEntity.packageName)
-        model.ruleResultLiveData.observe(this) {
+        model.getPkgRulesData(appEntity.packageName)
+        model.pkgHookAppInfoLiveData.observe(this) {
             configAdapter.setData(it.rule.toMutableList())
         }
     }
@@ -64,7 +64,7 @@ class HookAppActivity : BaseActivity() {
         }
 
         binding.fabAddHookRule.setOnClickListener {
-/*            configAdapter.saveAll {
+            /*configAdapter.saveAll {
                 MaterialAlertDialogBuilder(this)
                     .setTitle("提示")
                     .setMessage("不完整的Rule将被忽略: \n $it")
@@ -72,8 +72,14 @@ class HookAppActivity : BaseActivity() {
                     .show()
             }*/
 
-            InputDialog(this).of {
-                configAdapter.addSimpleData(appEntity.packageName, it)
+            InputDialog(this).of { name ->
+                configAdapter.getData().forEach {
+                    if (it.hookName == name) {
+                        Snackbar.make(binding.root, "已存在相同Rule", Snackbar.LENGTH_SHORT).show()
+                        return@of
+                    }
+                }
+                configAdapter.addSimpleData(appEntity.packageName, name)
             }.show()
         }
     }
@@ -97,6 +103,8 @@ class HookAppActivity : BaseActivity() {
             "删除成功!"
         } else {
             if (hookRule != null) {
+
+
                 if (configAdapter.getData().size == 1) {
                     val config = HookConfig(
                         0,

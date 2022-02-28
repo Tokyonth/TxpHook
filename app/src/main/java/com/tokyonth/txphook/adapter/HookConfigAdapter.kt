@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tokyonth.txphook.R
 import com.tokyonth.txphook.databinding.ItemHookConfigBinding
 import com.tokyonth.txphook.db.HookRule
+import com.tokyonth.txphook.utils.ktx.dp2px
 import com.tokyonth.txphook.utils.ktx.visibleOrGone
 
-class HookConfigAdapter(context: Context) : RecyclerView.Adapter<HookConfigAdapter.ViewHolder>() {
+class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var dataArr: MutableList<HookRule> = ArrayList()
 
@@ -54,18 +55,40 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<HookConfigAdapt
         notifyItemInserted(dataArr.size)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemHookConfigBinding.inflate(LayoutInflater.from(parent.context)))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == 1) {
+            val view = View(parent.context).apply {
+                layoutParams =
+                    ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100.dp2px().toInt())
+            }
+            BlockViewHolder(view)
+        } else {
+            ViewHolder(ItemHookConfigBinding.inflate(LayoutInflater.from(parent.context)))
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val data = dataArr[position]
-        holder.bind(data, btnClick!!)
-        holder.initExposedDrop(arrayAdapter)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ViewHolder) {
+            val data = dataArr[position]
+            holder.bind(data, btnClick!!)
+            holder.initExposedDrop(arrayAdapter)
+        }
     }
 
     override fun getItemCount(): Int {
-        return dataArr.size
+        return dataArr.size + 1
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position == dataArr.size) {
+            1
+        } else {
+            0
+        }
+    }
+
+    class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     }
 
     class ViewHolder(private val binding: ItemHookConfigBinding) :
@@ -121,7 +144,7 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<HookConfigAdapt
             val resultVale = binding.etHookResult.text.toString()
             val isEnableHook = binding.itemEnableHook.isChecked
 
-           // binding.itemExposedDrop.get
+            // binding.itemExposedDrop.get
 
             return if (methodName.isEmpty()
                 && classPath.isEmpty()
