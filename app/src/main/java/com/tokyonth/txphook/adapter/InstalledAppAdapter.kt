@@ -6,23 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.tokyonth.txphook.databinding.ItemInstalledAppsBinding
-import com.tokyonth.txphook.entry.AppEntry
+import com.tokyonth.txphook.entity.AppEntity
 
 class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>() {
 
-    private var dataArr: MutableList<AppEntry>? = null
+    private var dataArr: MutableList<AppEntity>? = null
 
-    private var click: ((Int, AppEntry) -> Unit)? = null
+    private var click: ((Int, AppEntity) -> Unit)? = null
 
     private lateinit var groupMap: Map<Int, String>
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(dataArr: MutableList<AppEntry>) {
+    fun setData(dataArr: MutableList<AppEntity>) {
         this.dataArr = dataArr
         notifyDataSetChanged()
     }
 
-    fun setItemClick(click: (Int, AppEntry) -> Unit) {
+    fun setItemClick(click: (Int, AppEntity) -> Unit) {
         this.click = click
     }
 
@@ -58,14 +58,14 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            appEntry: AppEntry,
+            appEntity: AppEntity,
             map: Map<Int, String>,
-            click: (Int, AppEntry) -> Unit
+            click: (Int, AppEntity) -> Unit
         ) {
             binding.run {
-                itemIvIcon.setImageDrawable(appEntry.appIcon)
-                itemTvName.text = appEntry.appName
-                itemTvVersion.text = appEntry.appVersion
+                itemIvIcon.setImageDrawable(appEntity.appIcon)
+                itemTvName.text = appEntity.appName
+                itemTvVersion.text = appEntity.appVersion
             }
 
             if (map.containsKey(adapterPosition)) {
@@ -76,7 +76,7 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
             }
 
             binding.root.setOnClickListener {
-                click.invoke(adapterPosition, appEntry)
+                click.invoke(adapterPosition, appEntity)
             }
         }
 

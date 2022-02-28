@@ -5,8 +5,8 @@ import android.content.pm.PackageInfo
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tokyonth.txphook.App
-import com.tokyonth.txphook.entry.AppEntry
-import com.tokyonth.txphook.entry.AppEntryComparator
+import com.tokyonth.txphook.entity.AppEntity
+import com.tokyonth.txphook.entity.AppEntityComparator
 import com.tokyonth.txphook.utils.ktx.doAsync
 import com.tokyonth.txphook.utils.ktx.onUI
 import com.tokyonth.txphook.utils.pinyin.PinyinUtils
@@ -16,9 +16,9 @@ import kotlin.collections.HashMap
 
 class InstalledAppViewModel : ViewModel() {
 
-    private val _dataResultLiveData = MutableLiveData<MutableList<AppEntry>>()
+    private val _dataResultLiveData = MutableLiveData<MutableList<AppEntity>>()
 
-    val dataResultLiveData: MutableLiveData<MutableList<AppEntry>> = _dataResultLiveData
+    val dataResultLiveData: MutableLiveData<MutableList<AppEntity>> = _dataResultLiveData
 
     fun getApps() {
         doAsync {
@@ -29,14 +29,14 @@ class InstalledAppViewModel : ViewModel() {
         }
     }
 
-    private fun getInstallApps(): MutableList<AppEntry> {
+    private fun getInstallApps(): MutableList<AppEntity> {
         val packageManager = App.context.packageManager
-        val packages: MutableList<AppEntry> = ArrayList()
+        val packages: MutableList<AppEntity> = ArrayList()
         try {
             val packageInfoArr: List<PackageInfo> = packageManager.getInstalledPackages(0)
             for (info in packageInfoArr) {
                 if (!isSystemApp(info)) {
-                    val pkg = AppEntry(
+                    val pkg = AppEntity(
                         packageManager.getApplicationIcon(info.applicationInfo),
                         packageManager.getApplicationLabel(info.applicationInfo).toString(),
                         info.versionName,
@@ -48,7 +48,9 @@ class InstalledAppViewModel : ViewModel() {
         } catch (t: Throwable) {
             t.printStackTrace()
         }
-        Collections.sort(packages, AppEntryComparator())
+        Collections.sort(packages,
+            AppEntityComparator()
+        )
         return packages
     }
 
@@ -58,16 +60,16 @@ class InstalledAppViewModel : ViewModel() {
         return isSysApp || isSysUpd
     }
 
-    fun getGroupIndex(appEntryList: MutableList<AppEntry>): Map<Int, String> {
+    fun getGroupIndex(appEntityList: MutableList<AppEntity>): Map<Int, String> {
         val groupIndexMap: MutableMap<Int, String> = HashMap()
-        if (appEntryList.isNotEmpty()) {
-            val size = appEntryList.size
-            val letter: String = PinyinUtils.getLetter(appEntryList[0].appName)
+        if (appEntityList.isNotEmpty()) {
+            val size = appEntityList.size
+            val letter: String = PinyinUtils.getLetter(appEntityList[0].appName)
             groupIndexMap[0] = letter
             for (i in 1 until size) {
-                val preContactBean: AppEntry = appEntryList[i - 1]
+                val preContactBean: AppEntity = appEntityList[i - 1]
                 val preLetter: String = PinyinUtils.getLetter(preContactBean.appName)
-                val contactBean: AppEntry = appEntryList[i]
+                val contactBean: AppEntity = appEntityList[i]
                 val curLetter: String = PinyinUtils.getLetter(contactBean.appName)
                 if (curLetter != preLetter) {
                     groupIndexMap[i] = curLetter

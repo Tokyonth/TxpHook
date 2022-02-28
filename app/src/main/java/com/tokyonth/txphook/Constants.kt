@@ -3,7 +3,8 @@ package com.tokyonth.txphook
 object Constants {
 
     const val SP_FILE_NAME = "spConfig"
-    const val DATABASE_TABLE_NAME = "hookConfig"
+    const val DATABASE_TABLE_CONFIG_NAME = "hookConfigs"
+    const val DATABASE_TABLE_RULE_NAME = "hookRules"
     const val MY_PACKAGE_NAME = "com.tokyonth.txphook"
     const val HOOK_JSON_PATH = "/storage/emulated/0/Android/data/$MY_PACKAGE_NAME/files/hooks/"
 

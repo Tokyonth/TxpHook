@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.tokyonth.txphook.adapter.HookAppsAdapter
@@ -19,14 +18,16 @@ class MainActivity : BaseActivity() {
 
     private val model: DataBaseViewModel by viewModels()
 
-    private val hookAdapter = HookAppsAdapter()
+    private lateinit var hookAdapter: HookAppsAdapter
 
     override fun setBinding() = binding
 
     override fun initData() {
         getExternalFilesDir("hooks")
 
-        model.getAllData()
+        hookAdapter = HookAppsAdapter(this)
+
+        model.getAllConfigData()
         model.dataResultLiveData.observe(this) {
             hookAdapter.setData(it)
         }

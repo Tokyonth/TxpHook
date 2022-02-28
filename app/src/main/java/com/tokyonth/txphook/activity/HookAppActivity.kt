@@ -8,10 +8,9 @@ import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.adapter.HookConfigAdapter
 import com.tokyonth.txphook.databinding.ActivityHookAppBinding
 import com.tokyonth.txphook.db.HookConfig
-import com.tokyonth.txphook.entry.AppEntry
-import com.tokyonth.txphook.entry.HookAppsEntry
+import com.tokyonth.txphook.db.HookRule
+import com.tokyonth.txphook.entity.AppEntity
 import com.tokyonth.txphook.utils.PackageUtils
-import com.tokyonth.txphook.utils.json.HookConfigManager
 import com.tokyonth.txphook.utils.ktx.lazyBind
 import com.tokyonth.txphook.viewmodel.DataBaseViewModel
 import com.tokyonth.txphook.widget.InputDialog
@@ -24,14 +23,14 @@ class HookAppActivity : BaseActivity() {
 
     override fun setBinding() = binding
 
-    private lateinit var appEntry: AppEntry
+    private lateinit var appEntity: AppEntity
 
     private lateinit var configAdapter: HookConfigAdapter
 
     override fun initData() {
         intent.run {
             val pkgName = getStringExtra(Constants.INTENT_PACKAGE_KEY)!!
-            appEntry = AppEntry(
+            appEntity = AppEntity(
                 PackageUtils.getAppIconByPackageName(this@HookAppActivity, pkgName),
                 getStringExtra(Constants.INTENT_APP_NAME_KEY)!!,
                 getStringExtra(Constants.INTENT_APP_VERSION_KEY)!!,
@@ -40,18 +39,19 @@ class HookAppActivity : BaseActivity() {
         }
 
         configAdapter = HookConfigAdapter(this)
-        configAdapter.setData(
-            HookConfigManager.getInstance()
-                .getHookConfig(appEntry.packageName)
-        )
+
+        model.getRuleData(appEntity.packageName)
+        model.ruleResultLiveData.observe(this) {
+            configAdapter.setData(it.rule.toMutableList())
+        }
     }
 
     @SuppressLint("SetTextI18n")
     override fun initView() {
         binding.run {
-            ivAppIcon.setImageDrawable(appEntry.appIcon)
-            tvAppInfo.text = "${appEntry.packageName} \n ${appEntry.appVersion}"
-            tvAppName.text = appEntry.appName
+            ivAppIcon.setImageDrawable(appEntity.appIcon)
+            tvAppInfo.text = "${appEntity.packageName} \n ${appEntity.appVersion}"
+            tvAppName.text = appEntity.appName
         }
 
         binding.rvHookConfig.apply {
@@ -59,28 +59,8 @@ class HookAppActivity : BaseActivity() {
             adapter = configAdapter
         }
 
-        configAdapter.setBtnClick { msg, position, type ->
-            Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
-            if (type == 0) {
-                configAdapter.getData().removeAt(position)
-                configAdapter.notifyItemRemoved(position)
-            } else {
-                val configEntry = HookAppsEntry().apply {
-                    packageName = appEntry.packageName
-                    isHook = true
-                }
-                HookConfigManager.getInstance().saveAppConfig(configEntry)
-
-                val dbHookConfig = HookConfig(
-                    0,
-                    appEntry.appName,
-                    appEntry.packageName,
-                    appEntry.appVersion,
-                    configAdapter.getData().size.toString()
-                )
-                //model.updateData(dbHookConfig)
-                model.insertData(dbHookConfig)
-            }
+        configAdapter.setBtnClick { hookRule, position, type ->
+            optRvClick(hookRule, position, type)
         }
 
         binding.fabAddHookRule.setOnClickListener {
@@ -93,9 +73,46 @@ class HookAppActivity : BaseActivity() {
             }*/
 
             InputDialog(this).of {
-                configAdapter.addSimpleData(appEntry.packageName, it)
+                configAdapter.addSimpleData(appEntity.packageName, it)
             }.show()
         }
+    }
+
+    private fun optRvClick(hookRule: HookRule?, position: Int, optType: Int) {
+        val msg = if (optType == 0) {
+            configAdapter.getData().removeAt(position)
+            configAdapter.notifyItemRemoved(position)
+            if (hookRule != null) {
+                model.removeRuleData(hookRule)
+            }
+            if (configAdapter.getData().isEmpty()) {
+                val config = HookConfig(
+                    0,
+                    appEntity.appName,
+                    appEntity.packageName,
+                    appEntity.appVersion
+                )
+                model.removeConfigData(config)
+            }
+            "删除成功!"
+        } else {
+            if (hookRule != null) {
+                if (configAdapter.getData().size == 1) {
+                    val config = HookConfig(
+                        0,
+                        appEntity.appName,
+                        appEntity.packageName,
+                        appEntity.appVersion
+                    )
+                    model.insertConfigData(config)
+                }
+                model.insertRuleData(hookRule)
+                "保存成功!"
+            } else {
+                "Rule不完整!"
+            }
+        }
+        Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
     }
 
 }

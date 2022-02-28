@@ -1,26 +1,27 @@
 package com.tokyonth.txphook.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.tokyonth.txphook.databinding.ItemHookAppsBinding
-import com.tokyonth.txphook.db.HookConfig
+import com.tokyonth.txphook.db.HookAppInfo
 import com.tokyonth.txphook.utils.PackageUtils
 
-class HookAppsAdapter : RecyclerView.Adapter<HookAppsAdapter.ViewHolder>() {
+class HookAppsAdapter(val context: Context) : RecyclerView.Adapter<HookAppsAdapter.ViewHolder>() {
 
-    private var dataArr: MutableList<HookConfig>? = null
+    private var dataArr: MutableList<HookAppInfo>? = null
 
-    private var click: ((Int, HookConfig) -> Unit)? = null
+    private var click: ((Int, HookAppInfo) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(dataArr: MutableList<HookConfig>) {
+    fun setData(dataArr: MutableList<HookAppInfo>) {
         this.dataArr = dataArr
         notifyDataSetChanged()
     }
 
-    fun setItemClick(click: (Int, HookConfig) -> Unit) {
+    fun setItemClick(click: (Int, HookAppInfo) -> Unit) {
         this.click = click
     }
 
@@ -31,7 +32,7 @@ class HookAppsAdapter : RecyclerView.Adapter<HookAppsAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataArr?.get(position)
         if (data != null && click != null) {
-            holder.bind(data, click!!)
+            holder.bind(context, data, click!!)
         }
     }
 
@@ -42,28 +43,30 @@ class HookAppsAdapter : RecyclerView.Adapter<HookAppsAdapter.ViewHolder>() {
     class ViewHolder(private val binding: ItemHookAppsBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private val context = binding.root.context
-
         @SuppressLint("SetTextI18n")
-        fun bind(hookConfig: HookConfig, click: ((Int, HookConfig) -> Unit)) {
+        fun bind(
+            context: Context,
+            hookAppInfo: HookAppInfo,
+            click: ((Int, HookAppInfo) -> Unit)
+        ) {
             binding.run {
-                itemTvName.text = hookConfig.appName
+                itemTvName.text = hookAppInfo.config.appName
                 itemTvVersion.text = PackageUtils.getVersionNameByPackageName(
                     context,
-                    hookConfig.packageName
+                    hookAppInfo.config.packageName
                 )
-                itemTvCurrVersion.append(hookConfig.appVersion)
+                itemTvCurrVersion.append(hookAppInfo.config.appVersion)
                 itemIvIcon.setImageDrawable(
                     PackageUtils.getAppIconByPackageName(
                         context,
-                        hookConfig.packageName
+                        hookAppInfo.config.packageName
                     )
                 )
-                itemTvRuleValue.text = "${hookConfig.hookAmount} 条Hook规则"
+                itemTvRuleValue.text = "${hookAppInfo.rule.size} 条Hook规则"
             }
 
             binding.root.setOnClickListener {
-                click.invoke(adapterPosition, hookConfig)
+                click.invoke(adapterPosition, hookAppInfo)
             }
         }
 

@@ -162,6 +162,7 @@
                             android:textSize="16sp" />
 
                         <com.tokyonth.txphook.view.SwitchButton
+                            android:id="@+id/item_enable_hook"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
