@@ -6,6 +6,7 @@ import android.graphics.Color
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.tokyonth.txphook.adapter.HookAppsAdapter
 import com.tokyonth.txphook.databinding.ActivityMainBinding
 import com.tokyonth.txphook.utils.ktx.lazyBind
@@ -49,7 +50,14 @@ class MainActivity : BaseActivity() {
         }
 
         hookAdapter.setItemClick { _, hookConfig ->
-            SheetDialog(this).apply {
+            SheetDialog(this) {
+                val msg = if (it) {
+                    "导出成功"
+                } else {
+                    "导出失败"
+                }
+                Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
+            }.apply {
                 setHookInfo(hookConfig)
             }.show()
         }

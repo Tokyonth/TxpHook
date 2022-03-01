@@ -12,8 +12,10 @@ import com.tokyonth.txphook.activity.HookAppActivity
 import com.tokyonth.txphook.databinding.LayoutDialogSheetBinding
 import com.tokyonth.txphook.db.HookAppInfo
 import com.tokyonth.txphook.utils.PackageUtils
+import com.tokyonth.txphook.utils.json.HookConfigExport
 
-class SheetDialog(private val ctx: Context) : BottomSheetDialog(ctx, R.style.BottomSheetDialog) {
+class SheetDialog(private val ctx: Context, private val export: (Boolean) -> Unit) :
+    BottomSheetDialog(ctx, R.style.BottomSheetDialog) {
 
     private val binding = LayoutDialogSheetBinding.inflate(LayoutInflater.from(context))
 
@@ -39,6 +41,12 @@ class SheetDialog(private val ctx: Context) : BottomSheetDialog(ctx, R.style.Bot
                 putExtra(Constants.INTENT_APP_VERSION_KEY, config.appVersion)
                 ctx.startActivity(this)
             }
+            dismiss()
+        }
+
+        binding.dialogButtonExport.setOnClickListener {
+            val isSuccess = HookConfigExport.export(hookAppInfo)
+            export.invoke(isSuccess)
             dismiss()
         }
     }

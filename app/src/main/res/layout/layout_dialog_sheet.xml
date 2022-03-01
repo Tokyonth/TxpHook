@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="24dp">
 
     <View
         android:id="@+id/view_tag"
@@ -44,6 +45,17 @@
         app:layout_constraintTop_toBottomOf="@id/dialog_tv_app_msg" />
 
     <Button
+        android:id="@+id/dialog_button_export"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="导出配置"
+        app:layout_constraintEnd_toStartOf="@id/dialog_button_to_hook_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_tv_rules" />
+
+    <Button
         android:id="@+id/dialog_button_to_hook_info"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
@@ -51,7 +63,7 @@
         android:layout_margin="24dp"
         android:text="查看详情"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/dialog_button_export"
         app:layout_constraintTop_toBottomOf="@id/dialog_tv_rules" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
