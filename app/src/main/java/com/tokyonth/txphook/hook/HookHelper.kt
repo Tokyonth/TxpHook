@@ -7,10 +7,11 @@ import de.robv.android.xposed.XposedHelpers
 class HookHelper {
 
     fun startHook(classLoader: ClassLoader, rules: List<HookRule>) {
-        for ((_, enableHook, _, _, classPath, methodName, resultVale) in rules) {
+        for ((_, enableHook, _, _, classPath, methodName, resultVale, valueType) in rules) {
             if (enableHook) {
-                var hookRep: Any? = XC_MethodReplacement.returnConstant(resultVale)
-                if (resultVale == "DO_NOTHING") {
+                val hookReturnValue = ParseDataType.pares(valueType, resultVale)
+                var hookRep: Any? = XC_MethodReplacement.returnConstant(hookReturnValue)
+                if (hookReturnValue == "XP_NOT") {
                     hookRep = XC_MethodReplacement.DO_NOTHING
                 }
                 XposedHelpers.findAndHookMethod(

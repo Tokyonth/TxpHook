@@ -1,9 +1,33 @@
 package com.tokyonth.txphook.hook
 
-class ParseDataType {
+object ParseDataType {
 
-    fun pares(index: Int) {
-
+    fun pares(index: Int, value: String): Any {
+        var optValue: Any = ""
+        when (index) {
+            0 -> {
+                optValue = value.toInt()
+            }
+            1 -> {
+                optValue = value.toLong()
+            }
+            2 -> {
+                optValue = value.toBoolean()
+            }
+            3 -> {
+                optValue = value.toFloat()
+            }
+            4 -> {
+                optValue = value.toDouble()
+            }
+            5 -> {
+                optValue = value
+            }
+            6 -> {
+                optValue = "XP_NOT"
+            }
+        }
+        return optValue
     }
 
 }
