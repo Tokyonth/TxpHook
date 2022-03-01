@@ -4,8 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/bg_bottom_action.xml" value="0.1625" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/bg_bottom_sheet.xml" value="0.166" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/bg_dialog_round.xml" value="0.1625" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/bg_round_status.xml" value="0.1625" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/ic_dialog_round_tag.xml" value="0.166" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/ic_round_add_24.xml" value="0.1625" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/drawable/ic_round_arrow_24.xml" value="0.1625" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/activity_app_list.xml" value="0.22780797101449277" />
@@ -16,6 +18,8 @@
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/item_installed_apps.xml" value="0.22780797101449277" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/item_list_array.xml" value="0.22780797101449277" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/layout_dialog_input.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/layout_dialog_progress.xml" value="0.22780797101449277" />
+        <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/layout_dialog_sheet.xml" value="0.22780797101449277" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/layout_hook_input.xml" value="0.22780797101449277" />
         <entry key="..\:/AndroidProjects/TxpHook/app/src/main/res/layout/layout_progress_dialog.xml" value="0.22780797101449277" />
       </map>

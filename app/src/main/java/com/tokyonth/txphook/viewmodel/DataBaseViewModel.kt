@@ -20,10 +20,6 @@ class DataBaseViewModel(application: Application) : AndroidViewModel(application
 
     val pkgHookAppInfoLiveData: MutableLiveData<HookAppInfo> = _pkgHookAppInfoLiveData
 
-    private val _hookRuleLiveData = MutableLiveData<HookRule>()
-
-    val hookRuleLiveData: MutableLiveData<HookRule> = _hookRuleLiveData
-
     fun getAllConfigData() {
         viewModelScope.launch {
             val allData = HookDbManager.get.getDao().queryAllConfig()
@@ -39,29 +35,39 @@ class DataBaseViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getRuleData(name: String) {
+    fun checkInsertConfigData(hookConfig: HookConfig) {
         viewModelScope.launch {
-            HookDbManager.get.getDao().queryRule(name)?.let {
-                _hookRuleLiveData.value = it
+            val appConfig = HookDbManager.get.getDao().queryRulesByPkg(hookConfig.packageName)
+            if (appConfig == null) {
+                HookDbManager.get.getDao().insertConfig(hookConfig)
+            } else {
+                appConfig.config.apply {
+                    appName = hookConfig.appName
+                    packageName = hookConfig.packageName
+                    appVersion = hookConfig.appVersion
+                }
+                HookDbManager.get.getDao().updateConfig(appConfig.config)
             }
         }
     }
 
-    fun insertConfigData(hookConfig: HookConfig) {
+    fun checkInsertRuleData(hookRule: HookRule) {
         viewModelScope.launch {
-            HookDbManager.get.getDao().insertConfig(hookConfig)
-        }
-    }
-
-    fun insertRuleData(hookRule: HookRule) {
-        viewModelScope.launch {
-            HookDbManager.get.getDao().insertRule(hookRule)
-        }
-    }
-
-    fun updateData(hookConfig: HookConfig) {
-        viewModelScope.launch {
-            HookDbManager.get.getDao().update(hookConfig)
+            val rule = HookDbManager.get.getDao().queryRule(hookRule.hookName)
+            if (rule == null) {
+                HookDbManager.get.getDao().insertRule(hookRule)
+            } else {
+                rule.apply {
+                    enableHook = hookRule.enableHook
+                    pkgName = hookRule.pkgName
+                    hookName = hookRule.hookName
+                    classPath = hookRule.classPath
+                    methodName = hookRule.methodName
+                    resultVale = hookRule.resultVale
+                    valueType = hookRule.valueType
+                }
+                HookDbManager.get.getDao().updateRule(rule)
+            }
         }
     }
 
@@ -73,7 +79,10 @@ class DataBaseViewModel(application: Application) : AndroidViewModel(application
 
     fun removeConfigData(hookConfig: HookConfig) {
         viewModelScope.launch {
-            HookDbManager.get.getDao().deleteConfig(hookConfig)
+            val appInfo = HookDbManager.get.getDao().queryRulesByPkg(hookConfig.packageName)
+            if (appInfo != null) {
+                HookDbManager.get.getDao().deleteConfig(appInfo.config)
+            }
         }
     }
 

@@ -103,18 +103,14 @@ class HookAppActivity : BaseActivity() {
             "删除成功!"
         } else {
             if (hookRule != null) {
-
-
-                if (configAdapter.getData().size == 1) {
-                    val config = HookConfig(
-                        0,
-                        appEntity.appName,
-                        appEntity.packageName,
-                        appEntity.appVersion
-                    )
-                    model.insertConfigData(config)
-                }
-                model.insertRuleData(hookRule)
+                val config = HookConfig(
+                    0,
+                    appEntity.appName,
+                    appEntity.packageName,
+                    appEntity.appVersion
+                )
+                model.checkInsertConfigData(config)
+                model.checkInsertRuleData(hookRule)
                 "保存成功!"
             } else {
                 "Rule不完整!"

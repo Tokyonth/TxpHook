@@ -8,7 +8,7 @@ import com.tokyonth.txphook.Constants
 data class HookConfig(
     @PrimaryKey(autoGenerate = true)
     val configId: Long = 0,
-    val appName: String,
-    val packageName: String,
-    val appVersion: String,
+    var appName: String,
+    var packageName: String,
+    var appVersion: String,
 )

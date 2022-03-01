@@ -40,11 +40,11 @@ class AppListActivity : BaseActivity() {
             layoutManager = appsLayoutManager
             adapter = appsAdapter
         }
-        appsAdapter.setItemClick { _, appEntry ->
+        appsAdapter.setItemClick { _, appEntity ->
             Intent(this, HookAppActivity::class.java).apply {
-                putExtra(Constants.INTENT_PACKAGE_KEY, appEntry.packageName)
-                putExtra(Constants.INTENT_APP_NAME_KEY, appEntry.appName)
-                putExtra(Constants.INTENT_APP_VERSION_KEY, appEntry.appVersion)
+                putExtra(Constants.INTENT_PACKAGE_KEY, appEntity.packageName)
+                putExtra(Constants.INTENT_APP_NAME_KEY, appEntity.appName)
+                putExtra(Constants.INTENT_APP_VERSION_KEY, appEntity.appVersion)
                 startActivity(this)
             }
         }

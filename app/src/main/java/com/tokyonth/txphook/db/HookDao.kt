@@ -31,6 +31,9 @@ interface HookDao {
     suspend fun deleteRule(hookRule: HookRule): Int
 
     @Update
-    suspend fun update(hookConfig: HookConfig): Int
+    suspend fun updateConfig(hookConfig: HookConfig): Int
+
+    @Update
+    suspend fun updateRule(hookRule: HookRule): Int
 
 }

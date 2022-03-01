@@ -11,6 +11,7 @@ import com.tokyonth.txphook.databinding.ActivityMainBinding
 import com.tokyonth.txphook.utils.ktx.lazyBind
 import com.tokyonth.txphook.view.GridItemDecoration
 import com.tokyonth.txphook.viewmodel.DataBaseViewModel
+import com.tokyonth.txphook.widget.SheetDialog
 
 class MainActivity : BaseActivity() {
 
@@ -27,7 +28,6 @@ class MainActivity : BaseActivity() {
 
         hookAdapter = HookAppsAdapter(this)
 
-        model.getAllConfigData()
         model.hookAppInfoLiveData.observe(this) {
             hookAdapter.setData(it)
         }
@@ -48,8 +48,10 @@ class MainActivity : BaseActivity() {
             adapter = hookAdapter
         }
 
-        hookAdapter.setItemClick { position, hookConfig ->
-
+        hookAdapter.setItemClick { _, hookConfig ->
+            SheetDialog(this).apply {
+                setHookInfo(hookConfig)
+            }.show()
         }
 
         binding.fabAdd.setOnClickListener {
@@ -59,6 +61,11 @@ class MainActivity : BaseActivity() {
 
     private fun isModuleActive(): Boolean {
         return false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        model.getAllConfigData()
     }
 
 }

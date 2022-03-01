@@ -3,10 +3,12 @@ package com.tokyonth.txphook.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.tokyonth.txphook.R
 import com.tokyonth.txphook.databinding.ItemHookConfigBinding
@@ -55,11 +57,15 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
         notifyItemInserted(dataArr.size)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 1) {
-            val view = View(parent.context).apply {
+            val view = TextView(parent.context).apply {
                 layoutParams =
                     ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100.dp2px().toInt())
+                gravity = Gravity.CENTER_HORIZONTAL
+                text = "未保存的Rule将被丢弃"
+                textSize = 14F
             }
             BlockViewHolder(view)
         } else {
@@ -87,9 +93,7 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    }
+    class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     class ViewHolder(private val binding: ItemHookConfigBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -103,10 +107,10 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
                 etHookMethodName.setText(hookRule.methodName)
             }
 
-            binding.itemEnableHook.setOnCheckedChangeListener { _, b ->
-                /*HookConfigManager.getInstance()
-                    .removeAndModifyHookConfig(hookInfoEntry.packageName, adapterPosition, 1, b)*/
-            }
+/*            binding.itemEnableHook.setOnCheckedChangeListener { _, b ->
+                *//*HookConfigManager.getInstance()
+                    .removeAndModifyHookConfig(hookInfoEntry.packageName, adapterPosition, 1, b)*//*
+            }*/
 
             binding.btnSaveHook.setOnClickListener {
                 if (fillConfigAndSave(hookRule)) {
@@ -117,7 +121,7 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
             }
 
             binding.btnDelHook.setOnClickListener {
-                btnClick.invoke(null, adapterPosition, 0)
+                btnClick.invoke(hookRule, adapterPosition, 0)
             }
 
             binding.llHookMsg.setOnClickListener {
