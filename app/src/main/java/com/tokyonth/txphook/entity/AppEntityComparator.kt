@@ -1,16 +1,14 @@
-package com.tokyonth.txphook.entity;
+package com.tokyonth.txphook.entity
 
-import com.tokyonth.txphook.utils.pinyin.PinyinUtils;
+import com.tokyonth.txphook.utils.pinyin.PinyinUtils
+import java.util.Comparator
 
-import java.util.Comparator;
+class AppEntityComparator : Comparator<AppEntity> {
 
-public class AppEntityComparator implements Comparator<AppEntity> {
-
-    @Override
-    public int compare(AppEntity o1, AppEntity o2) {
-        String pinYin1 = PinyinUtils.getPinyin(o1.getAppName());
-        String pinYin2 = PinyinUtils.getPinyin(o2.getAppName());
-        return pinYin1.compareTo(pinYin2);
+    override fun compare(o1: AppEntity, o2: AppEntity): Int {
+        val pinYin1 = PinyinUtils.getPinyin(o1.appName)
+        val pinYin2 = PinyinUtils.getPinyin(o2.appName)
+        return pinYin1.compareTo(pinYin2)
     }
 
 }
