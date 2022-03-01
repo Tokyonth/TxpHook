@@ -51,7 +51,7 @@ class HookConfigAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return if (viewType == 1) {
             val view = TextView(parent.context).apply {
                 layoutParams =
-                    ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100.dp2px().toInt())
+                    ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 120.dp2px().toInt())
                 gravity = Gravity.CENTER_HORIZONTAL
                 text = "未保存的Rule将被丢弃"
                 textSize = 14F
@@ -70,7 +70,11 @@ class HookConfigAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return dataArr.size + 1
+        return if (dataArr.size == 0) {
+            0
+        } else {
+            dataArr.size + 1
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
