@@ -25,7 +25,7 @@ class HookAppActivity : BaseActivity() {
 
     private lateinit var appEntity: AppEntity
 
-    private lateinit var configAdapter: HookConfigAdapter
+    private val configAdapter = HookConfigAdapter()
 
     override fun initData() {
         intent.run {
@@ -37,8 +37,6 @@ class HookAppActivity : BaseActivity() {
                 pkgName
             )
         }
-
-        configAdapter = HookConfigAdapter(this)
 
         model.getPkgRulesData(appEntity.packageName)
         model.pkgHookAppInfoLiveData.observe(this) {

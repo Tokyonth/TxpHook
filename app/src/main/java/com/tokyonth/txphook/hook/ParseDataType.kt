@@ -1,5 +1,9 @@
-package com.tokyonth.txphook.hook;
+package com.tokyonth.txphook.hook
 
-public class ParseDataType {
+class ParseDataType {
+
+    fun pares(index: Int) {
+
+    }
 
 }

@@ -55,7 +55,7 @@ class HookAppsAdapter(val context: Context) : RecyclerView.Adapter<HookAppsAdapt
                     context,
                     hookAppInfo.config.packageName
                 )
-                itemTvCurrVersion.append(hookAppInfo.config.appVersion)
+                itemTvCurrVersion.text = "适用版本: ${hookAppInfo.config.appVersion}"
                 itemIvIcon.setImageDrawable(
                     PackageUtils.getAppIconByPackageName(
                         context,

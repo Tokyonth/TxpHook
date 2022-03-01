@@ -84,13 +84,16 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:baselineAligned="false"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
                         android:layout_weight="3"
                         android:hint="返回值">
 
@@ -101,23 +104,24 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    <FrameLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_weight="2">
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_spinner_outline"
+                        android:padding="2dp">
 
-                        <AutoCompleteTextView
+                        <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/item_exposed_drop"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true"
-                            android:text="int"
-                            tools:ignore="LabelFor" />
+                            android:layout_height="match_parent"
+                            android:entries="@array/HookDataType"
+                            android:gravity="end" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                    </FrameLayout>
 
                 </LinearLayout>
 

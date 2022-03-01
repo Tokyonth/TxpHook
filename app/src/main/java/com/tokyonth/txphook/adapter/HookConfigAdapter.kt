@@ -1,33 +1,22 @@
 package com.tokyonth.txphook.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.tokyonth.txphook.R
 import com.tokyonth.txphook.databinding.ItemHookConfigBinding
 import com.tokyonth.txphook.db.HookRule
 import com.tokyonth.txphook.utils.ktx.dp2px
 import com.tokyonth.txphook.utils.ktx.visibleOrGone
 
-class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HookConfigAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var dataArr: MutableList<HookRule> = ArrayList()
 
     private var btnClick: ((HookRule?, Int, Int) -> Unit)? = null
-
-    private var arrayAdapter: ArrayAdapter<*>
-
-    init {
-        val items = context.resources.getStringArray(R.array.HookDataType)
-        arrayAdapter = ArrayAdapter(context, R.layout.item_list_array, items)
-    }
 
     fun setBtnClick(btnClick: (HookRule?, Int, Int) -> Unit) {
         this.btnClick = btnClick
@@ -48,10 +37,10 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
             enableHook = false,
             pkgName = pkgName,
             hookName = name,
+            valueType = -1,
             methodName = "",
             classPath = "",
-            resultVale = "",
-            valueType = ""
+            resultVale = ""
         )
         dataArr.add(rule)
         notifyItemInserted(dataArr.size)
@@ -77,7 +66,6 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
         if (holder is ViewHolder) {
             val data = dataArr[position]
             holder.bind(data, btnClick!!)
-            holder.initExposedDrop(arrayAdapter)
         }
     }
 
@@ -102,6 +90,7 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
             binding.run {
                 itemEnableHook.isChecked = hookRule.enableHook
                 itemHookName.text = hookRule.hookName
+                itemExposedDrop.setSelection(hookRule.valueType)
                 etHookPath.setText(hookRule.classPath)
                 etHookResult.setText(hookRule.resultVale)
                 etHookMethodName.setText(hookRule.methodName)
@@ -134,21 +123,12 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-        fun initExposedDrop(adapter: ArrayAdapter<*>) {
-            binding.itemExposedDrop.apply {
-                setAdapter(adapter)
-                keyListener = null
-                ellipsize = TextUtils.TruncateAt.END
-            }
-        }
-
         private fun fillConfigAndSave(hookRule: HookRule): Boolean {
             val methodName = binding.etHookMethodName.text.toString()
             val classPath = binding.etHookPath.text.toString()
             val resultVale = binding.etHookResult.text.toString()
             val isEnableHook = binding.itemEnableHook.isChecked
-
-            // binding.itemExposedDrop.get
+            val valueType = binding.itemExposedDrop.selectedItemPosition
 
             return if (methodName.isEmpty()
                 && classPath.isEmpty()
@@ -160,6 +140,7 @@ class HookConfigAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.Vi
                 hookRule.methodName = methodName
                 hookRule.classPath = classPath
                 hookRule.resultVale = resultVale
+                hookRule.valueType = valueType
                 true
             }
         }

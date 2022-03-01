@@ -14,5 +14,5 @@ data class HookRule(
     var classPath: String,
     var methodName: String,
     var resultVale: String,
-    var valueType: String
+    var valueType: Int
 )

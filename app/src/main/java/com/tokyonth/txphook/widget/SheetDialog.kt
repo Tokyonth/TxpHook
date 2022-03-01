@@ -39,6 +39,7 @@ class SheetDialog(private val ctx: Context) : BottomSheetDialog(ctx, R.style.Bot
                 putExtra(Constants.INTENT_APP_VERSION_KEY, config.appVersion)
                 ctx.startActivity(this)
             }
+            dismiss()
         }
     }
 
