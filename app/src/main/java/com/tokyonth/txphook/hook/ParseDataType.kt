@@ -12,7 +12,7 @@ object ParseDataType {
                 optValue = value.toLong()
             }
             2 -> {
-                optValue = value.toBoolean()
+                optValue = value.toBooleanStrict()
             }
             3 -> {
                 optValue = value.toFloat()

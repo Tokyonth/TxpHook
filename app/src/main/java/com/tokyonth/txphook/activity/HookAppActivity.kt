@@ -3,6 +3,7 @@ package com.tokyonth.txphook.activity
 import android.annotation.SuppressLint
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.adapter.HookConfigAdapter
@@ -10,6 +11,7 @@ import com.tokyonth.txphook.databinding.ActivityHookAppBinding
 import com.tokyonth.txphook.db.HookConfig
 import com.tokyonth.txphook.db.HookRule
 import com.tokyonth.txphook.entity.AppEntity
+import com.tokyonth.txphook.hook.ParseDataType
 import com.tokyonth.txphook.utils.PackageUtils
 import com.tokyonth.txphook.utils.ktx.lazyBind
 import com.tokyonth.txphook.viewmodel.DataBaseViewModel
@@ -107,14 +109,37 @@ class HookAppActivity : BaseActivity() {
                     appEntity.packageName,
                     appEntity.appVersion
                 )
-                model.checkInsertConfigData(config)
-                model.checkInsertRuleData(hookRule)
+
+                if (verifyDataType(hookRule)) {
+                    model.checkInsertConfigData(config)
+                } else {
+                    return
+                }
                 "保存成功!"
             } else {
                 "Rule不完整!"
             }
         }
         Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun verifyDataType(hookRule: HookRule): Boolean {
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle("错误")
+            .setMessage("你的返回值与类型不匹配!")
+            .setPositiveButton("确定", null)
+
+        return try {
+            ParseDataType.pares(hookRule.valueType, hookRule.resultVale)
+            model.checkInsertRuleData(hookRule)
+            true
+        } catch (e: NumberFormatException) {
+            dialog.show()
+            false
+        } catch (e: IllegalArgumentException) {
+            dialog.show()
+            false
+        }
     }
 
 }
