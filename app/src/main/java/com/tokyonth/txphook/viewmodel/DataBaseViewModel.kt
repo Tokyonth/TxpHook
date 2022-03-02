@@ -53,7 +53,8 @@ class DataBaseViewModel(application: Application) : AndroidViewModel(application
 
     fun checkInsertRuleData(hookRule: HookRule) {
         viewModelScope.launch {
-            val rule = HookDbManager.get.getDao().queryRule(hookRule.hookName)
+            val rule = HookDbManager.get.getDao()
+                .queryRule(hookRule.hookName, hookRule.pkgName)
             if (rule == null) {
                 HookDbManager.get.getDao().insertRule(hookRule)
             } else {
