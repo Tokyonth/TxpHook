@@ -98,6 +98,7 @@ class HookAppActivity : BaseActivity() {
                     appEntity.packageName,
                     appEntity.appVersion
                 )
+                configAdapter.notifyItemRemoved(0)
                 model.removeConfigData(config)
             }
             "删除成功!"

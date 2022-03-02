@@ -58,7 +58,8 @@ class HookConfigAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
             BlockViewHolder(view)
         } else {
-            ViewHolder(ItemHookConfigBinding.inflate(LayoutInflater.from(parent.context)))
+            val binding = ItemHookConfigBinding.inflate(LayoutInflater.from(parent.context))
+            ViewHolder(binding)
         }
     }
 
@@ -66,15 +67,18 @@ class HookConfigAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (holder is ViewHolder) {
             val data = dataArr[position]
             holder.bind(data, btnClick!!)
+        } else {
+            (holder as BlockViewHolder).bind(dataArr.size)
         }
     }
 
     override fun getItemCount(): Int {
-        return if (dataArr.size == 0) {
+        /*return if (dataArr.size == 0) {
             0
         } else {
             dataArr.size + 1
-        }
+        }*/
+        return dataArr.size + 1
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -85,7 +89,13 @@ class HookConfigAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        fun bind(size: Int) {
+            itemView.visibleOrGone(size != 0)
+        }
+
+    }
 
     class ViewHolder(private val binding: ItemHookConfigBinding) :
         RecyclerView.ViewHolder(binding.root) {
