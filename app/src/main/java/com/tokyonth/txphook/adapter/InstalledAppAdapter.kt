@@ -12,7 +12,7 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
 
     private var dataArr: MutableList<AppEntity>? = null
 
-    private var click: ((Int, AppEntity) -> Unit)? = null
+    private var click: ((Pair<View, View>, Int, AppEntity) -> Unit)? = null
 
     private lateinit var groupMap: Map<Int, String>
 
@@ -22,7 +22,7 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
         notifyDataSetChanged()
     }
 
-    fun setItemClick(click: (Int, AppEntity) -> Unit) {
+    fun setItemClick(click: (Pair<View, View>, Int, AppEntity) -> Unit) {
         this.click = click
     }
 
@@ -60,7 +60,7 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
         fun bind(
             appEntity: AppEntity,
             map: Map<Int, String>,
-            click: (Int, AppEntity) -> Unit
+            click: (Pair<View, View>, Int, AppEntity) -> Unit
         ) {
             binding.run {
                 itemIvIcon.setImageDrawable(appEntity.appIcon)
@@ -76,7 +76,11 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
             }
 
             binding.root.setOnClickListener {
-                click.invoke(adapterPosition, appEntity)
+                click.invoke(
+                    Pair(binding.itemIvIcon, binding.itemTvName),
+                    adapterPosition,
+                    appEntity
+                )
             }
         }
 

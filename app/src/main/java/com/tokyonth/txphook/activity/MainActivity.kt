@@ -1,12 +1,17 @@
 package com.tokyonth.txphook.activity
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Bundle
+import android.view.Window
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.adapter.HookAppsAdapter
 import com.tokyonth.txphook.databinding.ActivityMainBinding
 import com.tokyonth.txphook.utils.ktx.lazyBind
@@ -32,6 +37,13 @@ class MainActivity : BaseActivity() {
         model.hookAppInfoLiveData.observe(this) {
             hookAdapter.setData(it)
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+        window.sharedElementsUseOverlay = false
+        super.onCreate(savedInstanceState)
     }
 
     override fun initView() {
@@ -63,7 +75,14 @@ class MainActivity : BaseActivity() {
         }
 
         binding.fabAdd.setOnClickListener {
-            startActivity(Intent(this, AppListActivity::class.java))
+            it.transitionName = Constants.ELEMENT_CONTAINER_TRANSITION
+            val options = ActivityOptions.makeSceneTransitionAnimation(
+                this,
+                it,
+                Constants.ELEMENT_CONTAINER_TRANSITION
+            )
+            val listIntent = Intent(this, AppListActivity::class.java)
+            startActivity(listIntent, options.toBundle())
         }
     }
 

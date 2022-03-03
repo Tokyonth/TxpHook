@@ -1,6 +1,12 @@
 package com.tokyonth.txphook.activity
 
 import android.annotation.SuppressLint
+import android.os.Bundle
+import android.transition.ChangeBounds
+import android.transition.ChangeClipBounds
+import android.transition.ChangeImageTransform
+import android.transition.TransitionSet
+import android.view.Window
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -28,6 +34,19 @@ class HookAppActivity : BaseActivity() {
     private lateinit var appEntity: AppEntity
 
     private val configAdapter = HookConfigAdapter()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+        val transitionSet = TransitionSet()
+        transitionSet.addTransition(ChangeBounds())
+        transitionSet.addTransition(ChangeClipBounds())
+        transitionSet.addTransition(ChangeImageTransform())
+        window.sharedElementEnterTransition = transitionSet
+        window.sharedElementExitTransition = transitionSet
+        super.onCreate(savedInstanceState)
+        binding.ivAppIcon.transitionName = Constants.SHARE_ICON_TRANSITION
+        binding.tvAppName.transitionName = Constants.SHARE_NAME_TRANSITION
+    }
 
     override fun initData() {
         intent.run {
