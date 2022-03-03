@@ -2,9 +2,13 @@ package com.tokyonth.txphook.utils.json
 
 import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.db.HookAppInfo
+import com.tokyonth.txphook.db.HookConfig
+import com.tokyonth.txphook.db.HookRule
 import com.tokyonth.txphook.utils.file.FileUtils
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
+import java.io.File
 
 object HookConfigExport {
 
@@ -36,6 +40,52 @@ object HookConfigExport {
         val fileName = hookAppInfo.config.packageName + ".json"
         FileUtils.write(result.toString(), Constants.HOOK_JSON_PATH, fileName)
         return true
+    }
+
+    fun import(filePath: String, success: (HookAppInfo) -> Unit, error: (String) -> Unit) {
+        val jsonContent = FileUtils.read(File(filePath))
+        if (jsonContent.isEmpty()) {
+            error.invoke("配置为空!")
+            return
+        }
+        try {
+            val json = JSONObject(jsonContent)
+            val config = json.getJSONObject("config")
+            val rules = json.getJSONArray("rules")
+
+            val pkgName = config.getString("packageName")
+            val appName = config.getString("appName")
+            val appVersion = config.getString("appVersion")
+            val configEntity = HookConfig(0, appName, pkgName, appVersion)
+
+            val resultRule: MutableList<HookRule> = ArrayList()
+            for (index in 0 until rules.length()) {
+                val obj = rules.getJSONObject(index)
+                val enableHook = obj.getBoolean("enableHook")
+                val pkgNameR = obj.getString("pkgName")
+                val hookName = obj.getString("hookName")
+                val classPath = obj.getString("classPath")
+                val methodName = obj.getString("methodName")
+                val resultVale = obj.getString("resultVale")
+                val valueType = obj.getInt("valueType")
+
+                val rule = HookRule(
+                    0,
+                    enableHook,
+                    pkgNameR,
+                    hookName,
+                    classPath,
+                    methodName,
+                    resultVale,
+                    valueType
+                )
+                resultRule.add(rule)
+            }
+            val hookAppInfo = HookAppInfo(configEntity, resultRule)
+            success.invoke(hookAppInfo)
+        } catch (e: JSONException) {
+            error.invoke("配置解析错误!")
+        }
     }
 
 }

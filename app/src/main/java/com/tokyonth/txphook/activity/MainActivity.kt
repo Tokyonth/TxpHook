@@ -14,6 +14,7 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.adapter.HookAppsAdapter
 import com.tokyonth.txphook.databinding.ActivityMainBinding
+import com.tokyonth.txphook.utils.json.HookConfigExport
 import com.tokyonth.txphook.utils.ktx.lazyBind
 import com.tokyonth.txphook.view.GridItemDecoration
 import com.tokyonth.txphook.viewmodel.DataBaseViewModel
@@ -84,6 +85,14 @@ class MainActivity : BaseActivity() {
             val listIntent = Intent(this, AppListActivity::class.java)
             startActivity(listIntent, options.toBundle())
         }
+    }
+
+    private fun importConfig(filePath: String) {
+        HookConfigExport.import(filePath, {
+
+        }, {
+            Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+        })
     }
 
     private fun isModuleActive(): Boolean {

@@ -44,13 +44,13 @@ public class FileUtils {
             }
             File dir = new File(dirPath);
             if (!dir.exists()) {
-                dir.mkdirs();
+                boolean b = dir.mkdirs();
             }
         }
         File file = new File(filePath);
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                boolean b = file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
