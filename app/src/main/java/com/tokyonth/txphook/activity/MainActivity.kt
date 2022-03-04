@@ -14,7 +14,7 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.adapter.HookAppsAdapter
 import com.tokyonth.txphook.databinding.ActivityMainBinding
-import com.tokyonth.txphook.utils.json.HookConfigExport
+import com.tokyonth.txphook.utils.json.HookConfigManager
 import com.tokyonth.txphook.utils.ktx.lazyBind
 import com.tokyonth.txphook.view.GridItemDecoration
 import com.tokyonth.txphook.viewmodel.DataBaseViewModel
@@ -64,12 +64,15 @@ class MainActivity : BaseActivity() {
 
         hookAdapter.setItemClick { _, hookConfig ->
             SheetDialog(this) {
-                val msg = if (it) {
-                    "导出成功"
-                } else {
-                    "导出失败"
+                HookConfigManager.of(this) {
+                    val isSuccess = export(hookConfig)
+                    val msg = if (isSuccess) {
+                        "导出成功"
+                    } else {
+                        "导出失败"
+                    }
+                    Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
                 }
-                Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
             }.apply {
                 setHookInfo(hookConfig)
             }.show()
@@ -87,13 +90,13 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun importConfig(filePath: String) {
-        HookConfigExport.import(filePath, {
+/*    private fun importConfig(filePath: String) {
+*//*        HookConfigManager.import(filePath, {
 
         }, {
             Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
-        })
-    }
+        })*//*
+    }*/
 
     private fun isModuleActive(): Boolean {
         return false

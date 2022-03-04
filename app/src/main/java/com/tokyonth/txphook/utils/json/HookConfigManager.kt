@@ -1,16 +1,35 @@
 package com.tokyonth.txphook.utils.json
 
+import androidx.appcompat.app.AppCompatActivity
 import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.db.HookAppInfo
 import com.tokyonth.txphook.db.HookConfig
 import com.tokyonth.txphook.db.HookRule
+import com.tokyonth.txphook.utils.PermissionUtils
 import com.tokyonth.txphook.utils.file.FileUtils
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 
-object HookConfigExport {
+class HookConfigManager {
+
+    companion object {
+
+        private var instance: HookConfigManager? = null
+
+        fun of(appCompatActivity: AppCompatActivity, block: HookConfigManager.() -> Unit) {
+            PermissionUtils.checkPermission(appCompatActivity) {
+                if (instance == null && it) {
+                    instance = HookConfigManager()
+                    block.invoke(instance!!)
+                } else if (instance != null && it) {
+                    block.invoke(instance!!)
+                }
+            }
+        }
+
+    }
 
     fun export(hookAppInfo: HookAppInfo): Boolean {
         val config = JSONObject().apply {
