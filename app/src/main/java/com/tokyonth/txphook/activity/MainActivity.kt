@@ -14,6 +14,7 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.adapter.HookAppsAdapter
 import com.tokyonth.txphook.databinding.ActivityMainBinding
+import com.tokyonth.txphook.utils.PermissionUtils
 import com.tokyonth.txphook.utils.json.HookConfigManager
 import com.tokyonth.txphook.utils.ktx.lazyBind
 import com.tokyonth.txphook.view.GridItemDecoration
@@ -45,6 +46,7 @@ class MainActivity : BaseActivity() {
         setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
         window.sharedElementsUseOverlay = false
         super.onCreate(savedInstanceState)
+        PermissionUtils.register(this)
     }
 
     override fun initView() {
@@ -64,12 +66,16 @@ class MainActivity : BaseActivity() {
 
         hookAdapter.setItemClick { _, hookConfig ->
             SheetDialog(this) {
-                HookConfigManager.of(this) {
-                    val isSuccess = export(hookConfig)
-                    val msg = if (isSuccess) {
-                        "导出成功"
+                PermissionUtils.checkPermission {
+                    val msg = if (it) {
+                        val isSuccess = HookConfigManager.get.export(hookConfig)
+                        if (isSuccess) {
+                            "导出成功!"
+                        } else {
+                            "导出失败!"
+                        }
                     } else {
-                        "导出失败"
+                        "没有权限!"
                     }
                     Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
                 }
@@ -91,11 +97,11 @@ class MainActivity : BaseActivity() {
     }
 
 /*    private fun importConfig(filePath: String) {
-*//*        HookConfigManager.import(filePath, {
+        HookConfigManager.import(filePath, {
 
         }, {
             Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
-        })*//*
+        })
     }*/
 
     private fun isModuleActive(): Boolean {
@@ -105,6 +111,11 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         model.getAllConfigData()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PermissionUtils.unRegister()
     }
 
 }

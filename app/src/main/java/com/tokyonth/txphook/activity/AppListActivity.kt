@@ -18,7 +18,6 @@ import com.tokyonth.txphook.adapter.InstalledAppAdapter
 import com.tokyonth.txphook.databinding.ActivityAppListBinding
 import com.tokyonth.txphook.utils.ktx.lazyBind
 import com.tokyonth.txphook.viewmodel.InstalledAppViewModel
-import com.tokyonth.txphook.widget.ProgressDialog
 
 class AppListActivity : BaseActivity() {
 
@@ -28,14 +27,11 @@ class AppListActivity : BaseActivity() {
 
     private val appsAdapter = InstalledAppAdapter()
 
-    private var progressDialog: ProgressDialog? = null
-
     override fun setBinding() = binding
 
     override fun initData() {
         model.getApps()
-        progressDialog = ProgressDialog(this)
-        progressDialog?.show()
+        binding.refreshLayout.isRefreshing = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,12 +90,16 @@ class AppListActivity : BaseActivity() {
             }
         }
 
+        binding.refreshLayout.setOnRefreshListener {
+            model.getApps()
+        }
+
         model.dataResultLiveData.observe(this) {
             appsAdapter.setData(it)
             appsAdapter.setAppGroupMap(
                 model.getGroupIndex(it)
             )
-            progressDialog?.dismiss()
+            binding.refreshLayout.isRefreshing = false
         }
     }
 
