@@ -3,15 +3,11 @@ package com.tokyonth.txphook.activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Color
-import android.os.Bundle
 import android.util.Pair
 import android.view.MenuItem
-import android.view.Window
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.transition.platform.MaterialContainerTransform
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.R
 import com.tokyonth.txphook.adapter.InstalledAppAdapter
@@ -31,29 +27,12 @@ class AppListActivity : BaseActivity() {
 
     override fun initData() {
         model.getApps()
-        binding.refreshLayout.isRefreshing = true
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-
-        super.onCreate(savedInstanceState)
-
-        binding.root.transitionName = Constants.ELEMENT_CONTAINER_TRANSITION
-        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
-            addTarget(binding.root)
-            duration = 500L
-        }
-        window.sharedElementExitTransition = MaterialContainerTransform().apply {
-            addTarget(binding.root)
-            duration = 500L
-        }
     }
 
     override fun initView() {
         showToolbar()
 
+        binding.refreshLayout.isRefreshing = true
         val appsLayoutManager = GridLayoutManager(this@AppListActivity, 1)
         binding.rvInstallApps.apply {
             layoutManager = appsLayoutManager
@@ -70,11 +49,6 @@ class AppListActivity : BaseActivity() {
                 Pair(views.second, nameKey)
             )
 
-            window.sharedElementExitTransition = MaterialContainerTransform().apply {
-                addTarget(binding.root)
-                duration = 0
-            }
-
             Intent(this, HookAppActivity::class.java).apply {
                 putExtra(Constants.INTENT_PACKAGE_KEY, appEntity.packageName)
                 putExtra(Constants.INTENT_APP_NAME_KEY, appEntity.appName)
@@ -84,7 +58,8 @@ class AppListActivity : BaseActivity() {
         }
 
         binding.sideBarApp.setOnTouchLetterChangeListener {
-            val pos: Int = appsAdapter.getLetterPosition(it)
+            val pos: Int =
+                appsAdapter.getLetterPosition(it) ?: return@setOnTouchLetterChangeListener
             if (pos != -1) {
                 appsLayoutManager.scrollToPositionWithOffset(pos, 0)
             }

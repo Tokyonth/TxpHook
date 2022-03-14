@@ -12,9 +12,9 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
 
     private var dataArr: MutableList<AppEntity>? = null
 
-    private var click: ((Pair<View, View>, Int, AppEntity) -> Unit)? = null
+    private var groupMap: Map<Int, String>? = null
 
-    private lateinit var groupMap: Map<Int, String>
+    private var click: ((Pair<View, View>, Int, AppEntity) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(dataArr: MutableList<AppEntity>) {
@@ -30,8 +30,10 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
         groupMap = map
     }
 
-    fun getLetterPosition(letter: String): Int {
-        for (s in groupMap) {
+    fun getLetterPosition(letter: String): Int? {
+        if (groupMap == null)
+            return null
+        for (s in groupMap!!) {
             if (s.value == letter) {
                 return s.key
             }
@@ -51,6 +53,8 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
     }
 
     override fun getItemCount(): Int {
+        if (dataArr == null)
+            return 20
         return dataArr?.size ?: 0
     }
 
@@ -59,16 +63,18 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
 
         fun bind(
             appEntity: AppEntity,
-            map: Map<Int, String>,
+            map: Map<Int, String>?,
             click: (Pair<View, View>, Int, AppEntity) -> Unit
         ) {
+            binding.groupV.visibility = View.GONE
+
             binding.run {
                 itemIvIcon.setImageDrawable(appEntity.appIcon)
                 itemTvName.text = appEntity.appName
                 itemTvVersion.text = appEntity.appVersion
             }
 
-            if (map.containsKey(adapterPosition)) {
+            if (map != null && map.containsKey(adapterPosition)) {
                 binding.itemTvAppIndex.visibility = View.VISIBLE
                 binding.itemTvAppIndex.text = map[adapterPosition]
             } else {

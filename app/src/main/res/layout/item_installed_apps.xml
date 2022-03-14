@@ -17,7 +17,8 @@
         android:paddingEnd="16dp"
         android:paddingBottom="4dp"
         android:textColor="@color/black"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -31,11 +32,11 @@
             android:id="@+id/item_iv_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:src="@drawable/ic_default_app_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription"
-            tools:src="@tools:sample/avatars" />
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/item_tv_name"
@@ -57,6 +58,33 @@
             app:layout_constraintBottom_toBottomOf="@id/item_iv_icon"
             app:layout_constraintStart_toEndOf="@id/item_iv_icon"
             tools:text="@tools:sample/first_names" />
+
+        <View
+            android:id="@+id/v_name"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:layout_margin="4dp"
+            android:background="#DCDCDC"
+            app:layout_constraintBottom_toBottomOf="@id/item_tv_name"
+            app:layout_constraintStart_toStartOf="@id/item_tv_name"
+            app:layout_constraintTop_toTopOf="@id/item_tv_name" />
+
+        <View
+            android:id="@+id/v_version"
+            android:layout_width="70dp"
+            android:layout_height="0dp"
+            android:layout_margin="4dp"
+            android:background="#DCDCDC"
+            app:layout_constraintBottom_toBottomOf="@id/item_tv_version"
+            app:layout_constraintStart_toStartOf="@id/item_tv_version"
+            app:layout_constraintTop_toTopOf="@id/item_tv_version" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_v"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="v_name, v_version" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,10 +1,13 @@
 package com.tokyonth.txphook.utils.json
 
+import android.Manifest
+import androidx.appcompat.app.AppCompatActivity
 import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.db.HookAppInfo
 import com.tokyonth.txphook.db.HookConfig
 import com.tokyonth.txphook.db.HookRule
 import com.tokyonth.txphook.utils.file.FileUtils
+import com.tokyonth.txphook.utils.permission.PermissionUtils
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -14,8 +17,25 @@ class HookConfigManager {
 
     companion object {
 
-        val get: HookConfigManager by lazy {
-            HookConfigManager()
+        private var hookConfigManager: HookConfigManager? = null
+
+        private val permissionArray = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        fun of(activity: AppCompatActivity, instance: (HookConfigManager?) -> Unit) {
+            PermissionUtils(activity)
+                .request(*permissionArray) { areGrantedAll, _ ->
+                    if (areGrantedAll) {
+                        if (hookConfigManager == null) {
+                            hookConfigManager = HookConfigManager()
+                        }
+                        instance.invoke(hookConfigManager)
+                    } else {
+                        instance.invoke(null)
+                    }
+                }
         }
 
     }

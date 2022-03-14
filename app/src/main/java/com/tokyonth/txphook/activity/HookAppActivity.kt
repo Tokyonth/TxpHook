@@ -2,10 +2,6 @@ package com.tokyonth.txphook.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.ChangeClipBounds
-import android.transition.ChangeImageTransform
-import android.transition.TransitionSet
 import android.view.Window
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -37,15 +33,9 @@ class HookAppActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-        val transitionSet = TransitionSet()
-        transitionSet.addTransition(ChangeBounds())
-        transitionSet.addTransition(ChangeClipBounds())
-        transitionSet.addTransition(ChangeImageTransform())
-        window.sharedElementEnterTransition = transitionSet
-        window.sharedElementExitTransition = transitionSet
-        super.onCreate(savedInstanceState)
         binding.ivAppIcon.transitionName = Constants.SHARE_ICON_TRANSITION
         binding.tvAppName.transitionName = Constants.SHARE_NAME_TRANSITION
+        super.onCreate(savedInstanceState)
     }
 
     override fun initData() {
@@ -83,14 +73,6 @@ class HookAppActivity : BaseActivity() {
         }
 
         binding.fabAddHookRule.setOnClickListener {
-            /*configAdapter.saveAll {
-                MaterialAlertDialogBuilder(this)
-                    .setTitle("提示")
-                    .setMessage("不完整的Rule将被忽略: \n $it")
-                    .setPositiveButton("确定", null)
-                    .show()
-            }*/
-
             InputDialog(this).of { name ->
                 configAdapter.getData().forEach {
                     if (it.hookName == name) {
@@ -144,22 +126,25 @@ class HookAppActivity : BaseActivity() {
     }
 
     private fun verifyDataType(hookRule: HookRule): Boolean {
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setTitle("错误")
-            .setMessage("你的返回值与类型不匹配!")
-            .setPositiveButton("确定", null)
-
         return try {
             ParseDataType.pares(hookRule.valueType, hookRule.resultVale)
             model.checkInsertRuleData(hookRule)
             true
         } catch (e: NumberFormatException) {
-            dialog.show()
+            errorDialog(e.message)
             false
         } catch (e: IllegalArgumentException) {
-            dialog.show()
+            errorDialog(e.message)
             false
         }
+    }
+
+    private fun errorDialog(msg: String?) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("错误")
+            .setMessage("你的返回值与类型不匹配!\n $msg")
+            .setPositiveButton("确定", null)
+            .show()
     }
 
 }

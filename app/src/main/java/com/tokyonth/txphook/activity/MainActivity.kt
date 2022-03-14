@@ -1,20 +1,17 @@
 package com.tokyonth.txphook.activity
 
-import android.app.ActivityOptions
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.os.Bundle
-import android.view.Window
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
-import com.tokyonth.txphook.Constants
 import com.tokyonth.txphook.adapter.HookAppsAdapter
 import com.tokyonth.txphook.databinding.ActivityMainBinding
-import com.tokyonth.txphook.utils.PermissionUtils
+import com.tokyonth.txphook.utils.file.ContentPathUtils
 import com.tokyonth.txphook.utils.json.HookConfigManager
 import com.tokyonth.txphook.utils.ktx.lazyBind
 import com.tokyonth.txphook.view.GridItemDecoration
@@ -31,6 +28,13 @@ class MainActivity : BaseActivity() {
 
     override fun setBinding() = binding
 
+    private val safFile = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        val path = ContentPathUtils(
+            packageName
+        ).getFile(this, it)
+        Log.e("打印-->", path.absolutePath)
+    }
+
     override fun initData() {
         getExternalFilesDir("hooks")
 
@@ -39,14 +43,6 @@ class MainActivity : BaseActivity() {
         model.hookAppInfoLiveData.observe(this) {
             hookAdapter.setData(it)
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-        window.sharedElementsUseOverlay = false
-        super.onCreate(savedInstanceState)
-        PermissionUtils.register(this)
     }
 
     override fun initView() {
@@ -66,17 +62,14 @@ class MainActivity : BaseActivity() {
 
         hookAdapter.setItemClick { _, hookConfig ->
             SheetDialog(this) {
-                PermissionUtils.checkPermission {
-                    val msg = if (it) {
-                        val isSuccess = HookConfigManager.get.export(hookConfig)
+                HookConfigManager.of(this) {
+                    val msg = it?.export(hookConfig)?.let { isSuccess ->
                         if (isSuccess) {
                             "导出成功!"
                         } else {
                             "导出失败!"
                         }
-                    } else {
-                        "没有权限!"
-                    }
+                    } ?: "没有权限!"
                     Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
                 }
             }.apply {
@@ -85,14 +78,12 @@ class MainActivity : BaseActivity() {
         }
 
         binding.fabAdd.setOnClickListener {
-            it.transitionName = Constants.ELEMENT_CONTAINER_TRANSITION
-            val options = ActivityOptions.makeSceneTransitionAnimation(
-                this,
-                it,
-                Constants.ELEMENT_CONTAINER_TRANSITION
-            )
-            val listIntent = Intent(this, AppListActivity::class.java)
-            startActivity(listIntent, options.toBundle())
+            startActivity(Intent(this, AppListActivity::class.java))
+        }
+
+        binding.fabAdd.setOnLongClickListener {
+            safFile.launch("application/json")
+            true
         }
     }
 
@@ -111,11 +102,6 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         model.getAllConfigData()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        PermissionUtils.unRegister()
     }
 
 }
