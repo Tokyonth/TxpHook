@@ -32,7 +32,7 @@ class SideBarView : View {
     private var listener: OnTouchLetterChangeListener? = null
 
     // 渲染字母表
-    private var mLetters: List<String>? = null
+    private var mLetters: MutableList<String> = ArrayList()
 
     // 当前选中的位置
     private var mTextColor = -0x666667
@@ -102,7 +102,7 @@ class SideBarView : View {
     }
 
     private fun initView(context: Context, attrs: AttributeSet?) {
-        mLetters = listOf(*context.resources.getStringArray(R.array.SideBarLetters))
+        mLetters.addAll(listOf(*context.resources.getStringArray(R.array.SideBarLetters)))
 
         var mWaveColor = Color.BLACK
         var mTextColorChoose = Color.WHITE
@@ -138,7 +138,7 @@ class SideBarView : View {
         val y = event.y
         val x = event.x
         oldChoose = mChoose
-        newChoose = (y / mHeight * mLetters!!.size).toInt()
+        newChoose = (y / mHeight * mLetters.size).toInt()
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (x < mWidth - 2 * mRadius) {
@@ -150,10 +150,10 @@ class SideBarView : View {
             MotionEvent.ACTION_MOVE -> {
                 mCenterY = y.toInt()
                 if (oldChoose != newChoose) {
-                    if (newChoose >= 0 && newChoose < mLetters!!.size) {
+                    if (newChoose >= 0 && newChoose < mLetters.size) {
                         mChoose = newChoose
                         if (listener != null) {
-                            listener!!.onLetterChange(mLetters!![newChoose])
+                            listener!!.onLetterChange(mLetters[newChoose])
                         }
                     }
                 }
@@ -173,7 +173,7 @@ class SideBarView : View {
         val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
         var heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
         if (heightSpecMode == MeasureSpec.AT_MOST) {
-            heightSpecSize = (mLetters!!.size * mTextSize).toInt() + mPadding + mBallRadius
+            heightSpecSize = (mLetters.size * mTextSize).toInt() + mPadding + mBallRadius
         } else if (heightSpecMode == MeasureSpec.EXACTLY) {
             heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
         }
@@ -184,7 +184,7 @@ class SideBarView : View {
         super.onSizeChanged(w, h, oldw, oldh)
         mHeight = h
         mWidth = w
-        mItemHeight = (mHeight - mPadding) / mLetters!!.size
+        mItemHeight = (mHeight - mPadding) / mLetters.size
         mPosX = mWidth - 1.6F * mTextSize
     }
 
@@ -201,36 +201,22 @@ class SideBarView : View {
     }
 
     private fun drawLetters(canvas: Canvas) {
-/*        RectF rectF = new RectF();
-        rectF.left = mPosX - mTextSize;
-        rectF.right = mPosX + mTextSize;
-        rectF.top = mTextSize / 2;
-        rectF.bottom = mHeight - mTextSize / 2;*/
-
-/*        mLettersPaint.reset();
-        mLettersPaint.setStyle(Paint.Style.FILL);
-        mLettersPaint.setColor(Color.parseColor("#F9F9F9"));
-        mLettersPaint.setAntiAlias(true);
-      //  canvas.drawRoundRect(rectF, mTextSize, mTextSize, mLettersPaint);
-
-        mLettersPaint.reset();
-        mLettersPaint.setStyle(Paint.Style.STROKE);
-        mLettersPaint.setColor(mTextColor);
-        mLettersPaint.setAntiAlias(true);
-       // canvas.drawRoundRect(rectF, mTextSize, mTextSize, mLettersPaint);*/
         mLettersPaint.reset()
-        mLettersPaint.color = mTextColor
-        mLettersPaint.isAntiAlias = true
-        mLettersPaint.textSize = mTextSize
-        mLettersPaint.textAlign = Paint.Align.CENTER
+        mLettersPaint.apply {
+            color = mTextColor
+            isAntiAlias = true
+            textSize = mTextSize
+            textAlign = Paint.Align.CENTER
+        }
         val fontMetrics = mLettersPaint.fontMetrics
         baseLine = abs(-fontMetrics.bottom - fontMetrics.top)
-        for (i in mLetters!!.indices) {
+
+        for (i in mLetters.indices) {
             val posY = mItemHeight * (i + 1) + baseLine / 2
             if (i == mChoose) {
                 mPosY = posY
             } else {
-                canvas.drawText(mLetters!![i], mPosX, posY, mLettersPaint)
+                canvas.drawText(mLetters[i], mPosX, posY, mLettersPaint)
             }
         }
     }
@@ -242,11 +228,11 @@ class SideBarView : View {
             mLettersPaint.color = Color.BLACK
             mLettersPaint.textSize = mTextSize
             mLettersPaint.textAlign = Paint.Align.CENTER
-            canvas.drawText(mLetters!![mChoose], mPosX, mPosY, mLettersPaint)
+            canvas.drawText(mLetters[mChoose], mPosX, mPosY, mLettersPaint)
 
             // 绘制提示字符
             if (mRatio >= 0.9F) {
-                val target = mLetters!![mChoose]
+                val target = mLetters[mChoose]
                 canvas.drawText(target, mBallCentreX, fixBallYAxis + baseLine / 2, mTextPaint)
             }
         }
@@ -305,7 +291,7 @@ class SideBarView : View {
         fixBallYAxis = if (mCenterY <= firstY) {
             firstY
         } else {
-            min(mCenterY, mItemHeight * mLetters!!.size).toFloat()
+            min(mCenterY, mItemHeight * mLetters.size).toFloat()
         }
         mBallPath.addCircle(mBallCentreX, fixBallYAxis, mBallRadius.toFloat(), Path.Direction.CW)
         mBallPath.op(mWavePath, Path.Op.DIFFERENCE)
@@ -323,10 +309,10 @@ class SideBarView : View {
             mRatio = value.animatedValue as Float
             //球弹到位的时候，并且点击的位置变了，即点击的时候显示当前选择位置
             if (mRatio == 1F && oldChoose != newChoose) {
-                if (newChoose >= 0 && newChoose < mLetters!!.size) {
+                if (newChoose >= 0 && newChoose < mLetters.size) {
                     mChoose = newChoose
                     if (listener != null) {
-                        listener!!.onLetterChange(mLetters!![newChoose])
+                        listener!!.onLetterChange(mLetters[newChoose])
                     }
                 }
             }
@@ -335,7 +321,7 @@ class SideBarView : View {
         mRatioAnimator?.start()
     }
 
-    var letters: List<String>?
+    var letters: MutableList<String>
         get() = mLetters
         set(letters) {
             mLetters = letters
@@ -343,7 +329,8 @@ class SideBarView : View {
         }
 
     fun setSideLetters(list: List<String>) {
-        mLetters = list
+        mLetters.clear()
+        mLetters.addAll(list)
         invalidate()
     }
 
