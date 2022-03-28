@@ -1,16 +1,25 @@
 package com.tokyonth.txphook.utils
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
-import com.tokyonth.txphook.App
-import com.tokyonth.txphook.Constants
 
+/**
+ * SPUtils By Tokyonth
+ * 2022/3/23
+ */
 object SPUtils {
 
-    private const val USER = Constants.SP_FILE_NAME
+    private var USER: String? = null
+    private var APP: Application? = null
+
+    fun initSP(application: Application, spName: String) {
+        this.APP = application
+        this.USER = spName
+    }
 
     /**
      * 添加
@@ -36,20 +45,22 @@ object SPUtils {
     }
 
     private fun getSharedPreferences(any: Any): SharedPreferences {
-        return when (any) {
-            is Activity -> {
-                any.getSharedPreferences(USER, Context.MODE_PRIVATE)
-            }
-            is Fragment -> {
-                any.requireActivity().getSharedPreferences(USER, Context.MODE_PRIVATE)
-            }
-            is Context -> {
-                any.applicationContext.getSharedPreferences(USER, Context.MODE_PRIVATE)
-            }
+        if (USER == null) {
+            throw IllegalStateException("SharedPreference file name is null!")
+        }
+        val ctx = when (any) {
+            is Activity -> any
+            is Context -> any
+            is Fragment -> any.requireContext()
             else -> {
-                App.context.getSharedPreferences(USER, Context.MODE_PRIVATE)
+                if (APP == null) {
+                    throw IllegalStateException("Application context is null!")
+                } else {
+                    APP!!.applicationContext
+                }
             }
         }
+        return ctx.getSharedPreferences(USER, Context.MODE_PRIVATE)
     }
 
     private fun <T> putSP(
@@ -71,7 +82,7 @@ object SPUtils {
 
     @Suppress("UNCHECKED_CAST")
     private fun <T> getSP(mShareConfig: SharedPreferences, key: String, defValue: T): T {
-        val value = when (defValue) {
+        return when (defValue) {
             is String -> mShareConfig.getString(key, defValue)
             is Long ->
                 java.lang.Long.valueOf(mShareConfig.getLong(key, defValue))
@@ -89,7 +100,6 @@ object SPUtils {
                 mShareConfig.getString(key, defValue.toString())
             }
         } as T
-        return value
     }
 
 }

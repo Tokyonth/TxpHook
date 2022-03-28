@@ -10,6 +10,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import androidx.annotation.Keep
 import androidx.appcompat.widget.AppCompatCheckBox
+
 import com.tokyonth.txphook.R
 import com.tokyonth.txphook.utils.ktx.dp2px
 
@@ -24,6 +25,23 @@ class SwitchButton : AppCompatCheckBox {
         attrs,
         defStyleAttr
     )
+
+    companion object {
+        /**
+         * 控件默认宽度
+         */
+        private val DEFAULT_WIDTH: Int = 40.dp2px().toInt()
+
+        /**
+         * 控件默认高度
+         */
+        private val DEFAULT_HEIGHT = DEFAULT_WIDTH / 8 * 5
+
+        /**
+         * 中心圆边距
+         */
+        private const val centerRoundPadding = 10
+    }
 
     /**
      * 画笔
@@ -64,6 +82,22 @@ class SwitchButton : AppCompatCheckBox {
      * 开关指示器按钮的颜色
      */
     private var mButtonColor = -0x1
+
+    init {
+        // 不显示 CheckBox 默认的 Button
+        buttonDrawable = null
+        // 不显示 CheckBox 默认的背景
+        setBackgroundResource(0)
+        // 默认 CheckBox 为关闭状态
+        isChecked = false
+        mPaint = Paint()
+        mPaint.isAntiAlias = true
+        mRectF = RectF()
+        mBackgroundColorUnchecked = Color.parseColor("#E6E6E6")
+        mBackgroundColorChecked = context.resources.getColor(R.color.purple_500)
+        // 点击时开始动画
+        setOnClickListener { startAnimate() }
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
@@ -215,39 +249,6 @@ class SwitchButton : AppCompatCheckBox {
 
     fun setButtonColor(buttonColor: Int) {
         mButtonColor = buttonColor
-    }
-
-    companion object {
-        /**
-         * 控件默认宽度
-         */
-        private val DEFAULT_WIDTH: Int = 40.dp2px().toInt()
-
-        /**
-         * 控件默认高度
-         */
-        private val DEFAULT_HEIGHT = DEFAULT_WIDTH / 8 * 5
-
-        /**
-         * 中心圆边距
-         */
-        private const val centerRoundPadding = 10
-    }
-
-    init {
-        // 不显示 CheckBox 默认的 Button
-        buttonDrawable = null
-        // 不显示 CheckBox 默认的背景
-        setBackgroundResource(0)
-        // 默认 CheckBox 为关闭状态
-        isChecked = false
-        mPaint = Paint()
-        mPaint.isAntiAlias = true
-        mRectF = RectF()
-        mBackgroundColorUnchecked = Color.parseColor("#E6E6E6")
-        mBackgroundColorChecked = context.resources.getColor(R.color.purple_500)
-        // 点击时开始动画
-        setOnClickListener { startAnimate() }
     }
 
 }

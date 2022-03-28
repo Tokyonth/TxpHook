@@ -9,17 +9,17 @@ class HookDbManager(context: Context) {
 
     companion object {
 
-        private var instance: HookDbManager? = null
+        private var hookDbManager: HookDbManager? = null
 
-        val get: HookDbManager by lazy {
+        val instance: HookDbManager by lazy {
             HookDbManager(App.context)
         }
 
         fun of(context: Context): HookDbManager {
-            if (instance == null) {
-                instance = HookDbManager(context)
+            if (hookDbManager == null) {
+                hookDbManager = HookDbManager(context)
             }
-            return instance!!
+            return hookDbManager!!
         }
 
     }

@@ -3,6 +3,7 @@ package com.tokyonth.txphook
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import com.tokyonth.txphook.utils.SPUtils
 
 class App : Application() {
 
@@ -17,6 +18,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
+        SPUtils.initSP(this, Constants.SP_FILE_NAME)
     }
 
 }

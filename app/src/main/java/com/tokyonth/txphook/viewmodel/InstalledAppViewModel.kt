@@ -2,6 +2,7 @@ package com.tokyonth.txphook.viewmodel
 
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tokyonth.txphook.App
@@ -33,7 +34,7 @@ class InstalledAppViewModel : ViewModel() {
         val packageManager = App.context.packageManager
         val packages: MutableList<AppEntity> = ArrayList()
         try {
-            val packageInfoArr: List<PackageInfo> = packageManager.getInstalledPackages(0)
+            val packageInfoArr = packageManager.getInstalledPackages(0)
             for (info in packageInfoArr) {
                 if (!isSystemApp(info)) {
                     val pkg = AppEntity(
@@ -45,12 +46,13 @@ class InstalledAppViewModel : ViewModel() {
                     packages.add(pkg)
                 }
             }
+            Collections.sort(
+                packages,
+                AppEntityComparator()
+            )
         } catch (t: Throwable) {
             t.printStackTrace()
         }
-        Collections.sort(packages,
-            AppEntityComparator()
-        )
         return packages
     }
 
@@ -61,22 +63,20 @@ class InstalledAppViewModel : ViewModel() {
     }
 
     fun getGroupIndex(appEntityList: MutableList<AppEntity>): Map<Int, String> {
-        val groupIndexMap: MutableMap<Int, String> = HashMap()
-        if (appEntityList.isNotEmpty()) {
-            val size = appEntityList.size
-            val letter: String = PinyinUtils.getLetter(appEntityList[0].appName)
-            groupIndexMap[0] = letter
-            for (i in 1 until size) {
-                val preContactBean: AppEntity = appEntityList[i - 1]
-                val preLetter: String = PinyinUtils.getLetter(preContactBean.appName)
-                val contactBean: AppEntity = appEntityList[i]
-                val curLetter: String = PinyinUtils.getLetter(contactBean.appName)
-                if (curLetter != preLetter) {
-                    groupIndexMap[i] = curLetter
-                }
+        val indexMap = HashMap<Int, String>()
+        val array = appEntityList.map {
+            PinyinUtils.getLetter(it.appName)
+        }
+
+        indexMap[0] = array[0]
+        for (i in 1 until array.size) {
+            val l = array[i]
+            if (l != array[i - 1]) {
+                indexMap[i] = l
             }
         }
-        return groupIndexMap
+
+        return indexMap
     }
 
 }

@@ -2,6 +2,7 @@
 <resources>
 
     <declare-styleable name="SideBarView">
+        <attr name="sidebarEntries" format="reference" />
         <attr name="sidebarTextColor" format="color|reference" />
         <attr name="sidebarBackgroundColor" format="color|reference" />
         <attr name="sidebarChooseTextColor" format="color|reference" />
@@ -9,6 +10,10 @@
         <attr name="sidebarLargeTextSize" format="dimension" />
         <attr name="sidebarRadius" format="dimension" />
         <attr name="sidebarBallRadius" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CrBehavior">
+        <attr name="anchorId" format="reference|integer" />
     </declare-styleable>
 
 </resources>

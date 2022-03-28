@@ -3,12 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_hook_config"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        app:layout_behavior=".view.behavior.NestedContentScrollBehavior" />
+
+    <LinearLayout
+        android:id="@+id/ll_hook_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:anchorId="@id/rv_hook_config"
+        app:layout_behavior=".view.behavior.NestedHeaderScrollBehavior">
 
         <ImageView
             android:id="@+id/iv_app_icon"
@@ -36,7 +47,7 @@
             android:id="@+id/tv_app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:padding="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -44,15 +55,13 @@
             app:layout_constraintTop_toBottomOf="@id/tv_app_info"
             tools:text="TxpHook" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_hook_config"
+        <View
+            android:id="@+id/view_line"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="40dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_app_name" />
+            android:layout_height="1dp"
+            android:background="#E6E6E6" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_hook_rule"

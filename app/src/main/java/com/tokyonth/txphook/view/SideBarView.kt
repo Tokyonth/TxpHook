@@ -85,13 +85,9 @@ class SideBarView : View {
     private var baseLine = 0F
     private var isDrawWave = false
 
-    constructor(context: Context) : super(context) {
-        initView(context, null)
-    }
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        initView(context, attrs)
-    }
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
@@ -102,13 +98,16 @@ class SideBarView : View {
     }
 
     private fun initView(context: Context, attrs: AttributeSet?) {
-        mLetters.addAll(listOf(*context.resources.getStringArray(R.array.SideBarLetters)))
-
         var mWaveColor = Color.BLACK
         var mTextColorChoose = Color.WHITE
         var mLargeTextSize = mTextSize * 1.2F
         if (attrs != null) {
             val a = context.obtainStyledAttributes(attrs, R.styleable.SideBarView)
+            val entries = a.getTextArray(R.styleable.SideBarView_sidebarEntries)
+            if (entries != null) {
+                optEntries(entries)
+            }
+
             mTextColor = a.getColor(R.styleable.SideBarView_sidebarTextColor, mTextColor)
             mTextColorChoose =
                 a.getColor(R.styleable.SideBarView_sidebarChooseTextColor, mTextColorChoose)
@@ -132,6 +131,13 @@ class SideBarView : View {
             style = Paint.Style.FILL
             textAlign = Paint.Align.CENTER
         }
+    }
+
+    private fun optEntries(entries: Array<CharSequence>) {
+        val ts = entries.map {
+            it.toString()
+        }
+        mLetters.addAll(ts)
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -177,11 +183,17 @@ class SideBarView : View {
         } else if (heightSpecMode == MeasureSpec.EXACTLY) {
             heightSpecSize = MeasureSpec.getSize(heightMeasureSpec)
         }
+        if (mLetters.isEmpty()) {
+            return
+        }
         setMeasuredDimension(measuredWidth, heightSpecSize)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        if (mLetters.isEmpty()) {
+            return
+        }
         mHeight = h
         mWidth = w
         mItemHeight = (mHeight - mPadding) / mLetters.size
@@ -190,6 +202,9 @@ class SideBarView : View {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (mLetters.isEmpty()) {
+            return
+        }
         //绘制字母列表
         drawLetters(canvas)
         //绘制波浪
@@ -225,9 +240,11 @@ class SideBarView : View {
         if (mChoose != -1) {
             // 绘制右侧选中字符
             mLettersPaint.reset()
-            mLettersPaint.color = Color.BLACK
-            mLettersPaint.textSize = mTextSize
-            mLettersPaint.textAlign = Paint.Align.CENTER
+            mLettersPaint.apply {
+                color = Color.BLACK
+                textSize = mTextSize
+                textAlign = Paint.Align.CENTER
+            }
             canvas.drawText(mLetters[mChoose], mPosX, mPosY, mLettersPaint)
 
             // 绘制提示字符
@@ -238,9 +255,6 @@ class SideBarView : View {
         }
     }
 
-    /**
-     * 绘制波浪
-     */
     private fun drawWavePath(canvas: Canvas) {
         if (!isDrawWave) {
             return
@@ -321,12 +335,9 @@ class SideBarView : View {
         mRatioAnimator?.start()
     }
 
-    var letters: MutableList<String>
-        get() = mLetters
-        set(letters) {
-            mLetters = letters
-            invalidate()
-        }
+    fun setSideLetters(): MutableList<String> {
+        return mLetters
+    }
 
     fun setSideLetters(list: List<String>) {
         mLetters.clear()

@@ -38,10 +38,30 @@ class MainActivity : BaseActivity() {
     override fun initData() {
         getExternalFilesDir("hooks")
 
+        getIndex()
+
         hookAdapter = HookAppsAdapter(this)
 
         model.hookAppInfoLiveData.observe(this) {
             hookAdapter.setData(it)
+        }
+    }
+
+    private fun getIndex() {
+        val indexMap = HashMap<Int, String>()
+        val array = "AABBCCCCCDEEF".map {
+            it.toString()
+        }
+        indexMap[0] = array[0]
+        for (i in 1 until array.size) {
+            val l = array[i]
+            if (l != array[i - 1]) {
+                indexMap[i] = l
+            }
+        }
+
+        for (map in indexMap) {
+            Log.e("打印-->", "值: ${map.value}, 第一次下标: ${map.key}")
         }
     }
 
