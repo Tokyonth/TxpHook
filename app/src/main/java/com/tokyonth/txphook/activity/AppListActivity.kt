@@ -26,7 +26,7 @@ class AppListActivity : BaseActivity() {
     override fun setBinding() = binding
 
     override fun initData() {
-        model.getApps()
+        model.getInstalledApps()
     }
 
     override fun initView() {
@@ -57,43 +57,38 @@ class AppListActivity : BaseActivity() {
             }
         }
 
-        binding.sideBarApp.setOnTouchLetterChangeListener {
-            val pos: Int =
-                appsAdapter.getLetterPosition(it) ?: return@setOnTouchLetterChangeListener
-            if (pos != -1) {
-                appsLayoutManager.scrollToPositionWithOffset(pos, 0)
+        binding.sideBarApp.setOnTouchLetterChangeListener { word ->
+            appsAdapter.getLetterPosition(word).let {
+                if (it != null) {
+                    appsLayoutManager.scrollToPositionWithOffset(it, 0)
+                }
             }
         }
 
         binding.refreshLayout.setOnRefreshListener {
-            model.getApps()
+            model.getInstalledApps()
         }
 
         model.dataResultLiveData.observe(this) {
             appsAdapter.setData(it)
-            appsAdapter.setAppGroupMap(
-                model.getGroupIndex(it)
-            )
             binding.refreshLayout.isRefreshing = false
         }
     }
 
     private fun showToolbar() {
         setSupportActionBar(binding.toolBar)
-        supportActionBar.let {
-            if (it != null) {
-                this.title = "应用列表"
-                it.setHomeButtonEnabled(true)
-                it.setDisplayHomeAsUpEnabled(true)
-                val icon = ContextCompat.getDrawable(this, R.drawable.ic_round_back_24)?.apply {
-                    if (isLightStatusBar()) {
-                        setTint(Color.BLACK)
-                    } else {
-                        setTint(Color.WHITE)
-                    }
+        supportActionBar?.let {
+            this.title = "应用列表"
+            it.setHomeButtonEnabled(true)
+            it.setDisplayHomeAsUpEnabled(true)
+            val icon = ContextCompat.getDrawable(this, R.drawable.ic_round_back_24)?.apply {
+                if (isLightStatusBar()) {
+                    setTint(Color.BLACK)
+                } else {
+                    setTint(Color.WHITE)
                 }
-                binding.toolBar.navigationIcon = icon
             }
+            binding.toolBar.navigationIcon = icon
         }
     }
 

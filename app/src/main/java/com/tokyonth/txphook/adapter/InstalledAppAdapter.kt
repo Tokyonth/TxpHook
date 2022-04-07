@@ -7,18 +7,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.tokyonth.txphook.databinding.ItemInstalledAppsBinding
 import com.tokyonth.txphook.entity.AppEntity
+import com.tokyonth.txphook.utils.pinyin.PinyinUtils
 
 class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>() {
 
     private var dataArr: MutableList<AppEntity>? = null
 
-    private var groupMap: Map<Int, String>? = null
+    private var groupMap: HashMap<Int, String> = HashMap()
 
     private var click: ((Pair<View, View>, Int, AppEntity) -> Unit)? = null
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(dataArr: MutableList<AppEntity>) {
         this.dataArr = dataArr
+        getGroupIndex()
         notifyDataSetChanged()
     }
 
@@ -26,19 +28,28 @@ class InstalledAppAdapter : RecyclerView.Adapter<InstalledAppAdapter.ViewHolder>
         this.click = click
     }
 
-    fun setAppGroupMap(map: Map<Int, String>) {
-        groupMap = map
-    }
-
     fun getLetterPosition(letter: String): Int? {
-        if (groupMap == null)
+        if (groupMap.isEmpty())
             return null
-        for (s in groupMap!!) {
+        for (s in groupMap) {
             if (s.value == letter) {
                 return s.key
             }
         }
-        return -1
+        return null
+    }
+
+    private fun getGroupIndex() {
+        val array = dataArr!!.map {
+            PinyinUtils.getLetter(it.appName)
+        }
+        groupMap[0] = array[0]
+        for (i in 1 until array.size) {
+            val l = array[i]
+            if (l != array[i - 1]) {
+                groupMap[i] = l
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
