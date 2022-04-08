@@ -335,7 +335,7 @@ class SideBarView : View {
         mRatioAnimator?.start()
     }
 
-    fun setSideLetters(): MutableList<String> {
+    fun getSideLetters(): MutableList<String> {
         return mLetters
     }
 
