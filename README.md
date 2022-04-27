@@ -7,4 +7,5 @@
 
 ## 截图
 
-|  ![TxpHook](screenshot/1.jpg)  | ![TxpHook](screenshot/2.jpg)
+![TxpHook](screenshot/1.jpg)  | ![TxpHook](screenshot/2.jpg)
+---|---
