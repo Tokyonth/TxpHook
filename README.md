@@ -7,4 +7,4 @@
 
 ## 截图
 
-|  ![ApkInstaller](screenshot/1.jpg)  | ![ApkInstaller](screenshot/2.jpg)  |
+|  ![TxpHook](screenshot/1.jpg)  | ![TxpHook](screenshot/2.jpg)
